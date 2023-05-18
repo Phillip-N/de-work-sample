@@ -1,0 +1,6 @@
+kaggle.json
+exports/
+dataset_testing.ipynb
+.ipynb_checkpoints/
+stock-market-dataset/
+pad
