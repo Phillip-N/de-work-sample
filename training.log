@@ -1,0 +1,4 @@
+2023-05-19 17:58:14,400 - INFO - Mean Absolute Error: 822451.9952818278
+2023-05-19 17:58:14,400 - INFO - Mean Squared Error: 130013291187939.98
+2023-05-19 17:58:40,843 - INFO - Model saved successfully.
+2023-05-19 17:58:42,075 - INFO - Closing down clientserver connection

@@ -1,5 +1,7 @@
 kaggle.json
 exports/
+backup/
+*.ipynb
 dataset_testing.ipynb
 .ipynb_checkpoints/
 stock-market-dataset/

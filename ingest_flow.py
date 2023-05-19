@@ -69,6 +69,7 @@ def clean(df) -> pd.DataFrame:
     Volume             683
     '''
     df = df.dropna(subset=['Open'])
+    df = df.copy()
 
     """Fix dtype issues"""
     df.Date = pd.to_datetime(df.Date)
