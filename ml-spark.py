@@ -11,7 +11,7 @@ import mlflow
 
 try:
     # Set up logging
-    logging.basicConfig(filename='training.log', level=logging.INFO,
+    logging.basicConfig(filename='training-spark.log', level=logging.INFO,
                         format='%(asctime)s - %(levelname)s - %(message)s')
 
     # Create a Spark session
@@ -60,7 +60,9 @@ try:
 
     # Save the trained model
     trained_model.save("ml_model")
-    mlflow.spark.save_model(spark_model=trained_model, path="mlflow_model")
+    
+    # MFLOW
+    # mlflow.spark.save_model(spark_model=trained_model, path="mlflow_model")
     
     logging.info('Model saved successfully.')
 
