@@ -1,8 +1,11 @@
 kaggle.json
 exports/
 backup/
+data/
 *.ipynb
 dataset_testing.ipynb
 .ipynb_checkpoints/
 stock-market-dataset/
 pad
+rolling_avg_calculations.py
+ml_with_ray.py

@@ -2,12 +2,16 @@ from pathlib import Path
 import pandas as pd
 from prefect import flow, task
 import os
-import kaggle
 import zipfile
-import multiprocessing
+from ml_sklearn import train_model_sklearn
+from kaggle_build import build_kaggle_json
+import ray
 
-# @task(retries=3, log_prints=True)
+@task(retries=3, log_prints=True)
 def fetch_dataset():
+    build_kaggle_json()
+    
+    import kaggle
     kaggle.api.authenticate()
     kaggle.api.dataset_download_files('jacksoncrow/stock-market-dataset', 'stock-market-dataset/', quiet=False, unzip=False)
 
@@ -18,12 +22,12 @@ def fetch_dataset():
             except Exception as e:
                 print(e)
 
-# @task(log_prints=True)
+@task(log_prints=True)
 def combine_data() -> pd.DataFrame:
     path = os.getcwd()
     symbols_df = pd.read_csv('./stock-market-dataset/symbols_valid_meta.csv')
 
-    etf_files = Path(path+'\stock-market-dataset\etfs').glob('*.csv')
+    etf_files = Path(path+'/stock-market-dataset/etfs').glob('*.csv')
     etf_dfs = []
     for f in etf_files:
         ticker = os.path.basename(f).split(".")[0]
@@ -35,7 +39,7 @@ def combine_data() -> pd.DataFrame:
     # merge to pick up security name
     combined_etfs = pd.merge(combined_etfs, symbols_df[['Symbol', 'Security Name']], how='left', on='Symbol')
 
-    stock_files = Path(path+'\stock-market-dataset\stocks').glob('*.csv')
+    stock_files = Path(path+'/stock-market-dataset/stocks').glob('*.csv')
     stock_dfs = []
     for f in stock_files:
         ticker = os.path.basename(f).split(".")[0]
@@ -53,7 +57,7 @@ def combine_data() -> pd.DataFrame:
 
     return all_securities_df
 
-# @task(log_prints=True)
+@task(log_prints=True)
 def clean(df) -> pd.DataFrame:
     '''
     null values exist in the following columns.
@@ -81,7 +85,7 @@ def clean(df) -> pd.DataFrame:
 
     return df
 
-# @task(log_prints=True)
+@ray.remote
 def calculate_rolling_averages(data):
     window = 30
     symbol, group = data
@@ -89,17 +93,33 @@ def calculate_rolling_averages(data):
     group['adj_close_rolling_med'] = group['Adj Close'].rolling(window=window, min_periods=window).mean()
     return group
 
-# @task(log_prints=True)
+@task(log_prints=True)
 def apply_rolling_averages(df):
-    with multiprocessing.Pool() as pool:
-        results = pool.map(calculate_rolling_averages, df.groupby('Symbol'))
+    ray.init(object_store_memory=12 * 1024 * 1024 * 1024)
+    grouped_data = df.groupby('Symbol')
+    results = ray.get([calculate_rolling_averages.remote(data) for data in grouped_data])
     new_df = pd.concat(results)
+    ray.shutdown()
     return new_df
 
-if __name__ == "__main__":
+@task(log_prints=True)
+def feature_transformations(df):
+    rolling_df = apply_rolling_averages(df)
+    return rolling_df
+
+@task(log_prints=True)
+def train_ml_model(ml_data):
+    train_model_sklearn(ml_data)
+
+@flow()
+def etl_parent_flow():
     fetch_dataset()
     combined_df = combine_data()
-    combined_df.to_parquet("solution-1.parquet", index=False)
+    combined_df.to_parquet("data/solution-1.parquet", index=False)
     cleaned_df = clean(combined_df)
     rolling_df = apply_rolling_averages(cleaned_df)
-    rolling_df.to_parquet("solution-2.parquet", index=False)
+    rolling_df.to_parquet("data/solution-2.parquet", index=False)
+    train_ml_model(rolling_df)
+
+if __name__ == "__main__":
+    etl_parent_flow()

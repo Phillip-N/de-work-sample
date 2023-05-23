@@ -1,0 +1,5 @@
+2023-05-22 20:14:07,280 - INFO - Mean Absolute Error: 434904.39686393866
+2023-05-22 20:14:07,281 - INFO - Mean Squared Error: 48831709428091.75
+2023-05-22 20:14:07,285 - INFO - Training completed.
+2023-05-22 20:14:09,726 - INFO - Finished in state Completed()
+2023-05-22 20:14:09,773 - INFO - Finished in state Completed('All states completed.')

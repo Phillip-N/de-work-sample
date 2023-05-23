@@ -1,0 +1,6 @@
+pandas==1.4.1
+protobuf==4.22.0
+pyarrow==10.0.1
+opendatasets
+scikit-learn
+ray
