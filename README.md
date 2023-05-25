@@ -56,7 +56,7 @@ After the calculations have been done and the new columns have been added, the n
 Using a Random Forest algorithm, we can train a model to predict stock volume based the `vol_moving_avg` and `adj_close_rolling_med` metrics we calculated above. Two options were considered when deciding which machine learning library to use to build the model.
 
 **Spark**
-pyspark can be used to train the model, and leverages Spark's resilient distributed dataset for parallel computer. The benefit of using Spark from what I've seen is that it able to more efficiently utilize resources when dealing with larger datasets. The time it takes for Spark to build 100 trees with no limit on depth, was much faster than Sci-kit learn.
+pyspark can be used to train the model, and leverages Spark's resilient distributed dataset for parallel computer. The benefit of using Spark from what I've seen is that it able to more efficiently utilize resources when dealing with larger datasets. The time it takes for Spark to build 100 trees with no limit on depth, was much faster than Sci-kit learn. A Spark variation of the ML training script is available under `ml_spark.py`, however this has not been integrated with docker.
 
 **Sci-kit Learn**
 Sci-kit learn can also be used to train the model. The benefit of sci-kit learn is that it requires much less overhead than Spark does, and for use-cases where the dataset is small, and where training periods are not a huge concern, it may be preferable. Using Sklearn also means that the model can easily be seralized (pickled) and deserialized once it has finished training. This makes it much more easier to serve the model on an API for example, because unlike with Spark models, sklearn models do not require a Spark session and clusters to be active.
@@ -75,10 +75,10 @@ As the pipeline has been entirely dockerized, reproducing the results should be 
 2. Run the docker image, passing in your kaggle username and key (found in .json file, these should be strings and passed as "username" or "password") `docker run --shm-size=8g -e KAGGLE_USER={YOUR_KAGGLE_USERNAME} -e KAGGLE_KEY={YOUR_KAGGLE_KEY} phillipng/stock-etl-docker:{tag}`
 3. This will run the etl pipeline and print out progress updates to the console (progress also trackable through the Pefect UI, if using Prefect)
 4. Any files of interest can then be copied locally
-  * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-1.parquet {LOCAL_PATH}`
-  * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-2.parquet {LOCAL_PATH}`
-  * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/ml_model.pkl {LOCAL_PATH}`
-  * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/training-sklearn.log {LOCAL_PATH}`
+   * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-1.parquet {LOCAL_PATH}`
+   * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-2.parquet {LOCAL_PATH}`
+   * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/ml_model.pkl {LOCAL_PATH}`
+   * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/training-sklearn.log {LOCAL_PATH}`
 
 ### Serving the Machine Learning Model <a name='serve'></a>
 The model was served using a basic flask app on render.com. Currently, the web app has a single endpoint, which **requires** two input parameters `vol_moving_avg` and `adj_close_rolling_med`, that can be either an integer or a float. The endpoint uri must look like the below for the GET call to be successful. 
