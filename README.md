@@ -22,7 +22,7 @@ The pipeline architecture can be seen in the below diagram. Technologies that wi
 * <b>Sci-kit Learn</b> - For building the ML model (Choice)
 * <b>Flask</b> - For serving the ML model
 
-![image](https://github.com/Phillip-N/de-work-sample/assets/10274304/0bbd1c3b-c574-488e-9848-638a7ac9ca7a)
+![image](https://github.com/Phillip-N/de-work-sample/assets/10274304/fbcd05ff-6669-4148-adff-e778b0f470bb)
 
 ## Raw Data Processing <a name='raw'></a>
 Raw data will be downloaded from Kaggle using the Kaggle API. In order for this to work, the user will need to open up a kaggle account and generate an API token https://www.kaggle.com/docs/api. The credentials can be later passed down as a parameter to the docker container.
@@ -95,8 +95,7 @@ Prefect, which can be thought of as an alternative to airflow, can be used to mo
 
 Using prefect requires the user know how to set properly set up their docker blocks https://docs.prefect.io/latest/guides/deployment/docker/ and requires a prefect orion server and a prefect agent to be active. Once these prerequisites are met, we can sit back while Prefect manages the workflow.
 
-![flow_run](https://github.com/Phillip-N/de-work-sample/assets/10274304/957ba4b5-2248-4312-bd92-cf426eb67c81)
-
+![flow_run](https://github.com/Phillip-N/de-work-sample/assets/10274304/15c7d95a-e214-4dda-b6ae-6662af78d575)
 
 
 
