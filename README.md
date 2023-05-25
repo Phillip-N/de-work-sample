@@ -8,7 +8,8 @@
 5. [Integrating Machine Learning](#ml)
 6. [Steps to Reproduce](#repro)
 7. [Serving the Model](#serve)
-8. [Prefect](#prefect)
+    * [Testing the Model and API](#test)
+9. [Prefect](#prefect)
 
 ## Purpose of the Project <a name='purpose'></a>
 The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful run can be found in etl-logging.log (for the main etl function) **and** training-sklearn.log (for the ML modeling).
@@ -68,7 +69,7 @@ Because we plan to serve the trained model through an API, we will opt for using
 * <b>max_depth=6</b> - setting max_depth to 6 as to not overfit the model, and also reduce training time
 * <b>verbose=10</b> - for printing out progress to console
 
-### Steps to Reproduce <a name='repro'></a>
+## Steps to Reproduce <a name='repro'></a>
 As the pipeline has been entirely dockerized, reproducing the results should be a matter of following the below steps.
 
 1. Pull the image from docker hub here: https://hub.docker.com/repository/docker/phillipng/stock-etl-docker/general
@@ -81,12 +82,15 @@ As the pipeline has been entirely dockerized, reproducing the results should be 
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/etl-logging.log {LOCAL_PATH}`
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/training-sklearn.log {LOCAL_PATH}`
 
-### Serving the Machine Learning Model <a name='serve'></a>
-The model was served using a basic flask app on render.com. Currently, the web app has a single endpoint, which **requires** two input parameters `vol_moving_avg` and `adj_close_rolling_med`, that can be either an integer or a float. The endpoint uri must look like the below for the GET call to be successful. 
+## Serving the Machine Learning Model <a name='serve'></a>
+The model was served using a basic flask app on render.com. Currently, the web app has a single endpoint, which **requires** two input parameters `vol_moving_avg` and `adj_close_rolling_med`, that can be either an integer or a float. The endpoint uri must look like the below for the GET call to be successful. App was made not to accept a non-zero value for vol_moving_avg, and returns a 400 response code, if a negative number is passed in.
 
 https://stock-volume-predict.onrender.com/predict?vol_moving_avg=4213434&adj_close_rolling_med=532
 
-### BONUS: Using Prefect <a name='prefect'></a>
+### Testing the Model and API <a name='test'></a>
+API tests were conducted and can be found in the flask_deployment folder. The python `random` library is leveraged to generate 100 random combinations of the two parameters needed to pass into the call, and the `requests` library is then used to send a `get` call to the API endpoint. Response times for each call was decent, taking an average of 0.47 seconds per call.
+
+## BONUS: Using Prefect <a name='prefect'></a>
 Prefect, which can be thought of as an alternative to airflow, can be used to more easily track the workflow of our ETL pipeline, while also allowing us to better manage our infrastructure with other services. Both a prefect variant of the `etl_flow.py` (prefect version: `etl_flow_prefect.py`) script and the dockerfile (`Dockerfile_prefect`), can also be found in this repo, and can be used if the user prefers a more cleaner approach to managing their workflows.
 
 Using prefect requires the user know how to set properly set up their docker blocks https://docs.prefect.io/latest/guides/deployment/docker/ and requires a prefect orion server and a prefect agent to be active. Once these prerequisites are met, we can sit back while Prefect manages the workflow.
