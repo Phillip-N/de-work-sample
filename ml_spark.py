@@ -1,3 +1,12 @@
+'''
+ML implementation using spark.
+spark using RDD to train models, which can greatly increase the speed at which a model is trained.
+
+spark ML builds a spark model, which generally requires a Spark sesion to be active in order to serve predictions.
+because of this, to serve a spark model through an API you would need to have spark cluster(s) integrated with your backend, which may not
+be ideal for most use cases.
+'''
+
 from pyspark.sql import SparkSession
 from pyspark.ml.regression import RandomForestRegressor
 from pyspark.ml.evaluation import RegressionEvaluator
@@ -12,7 +21,7 @@ def train_model_spark(ml_data):
     try:
         # Set up logging
         logging.basicConfig(filename='training-spark.log', level=logging.INFO,
-                            format='%(asctime)s - %(levelname)s - %(message)s')
+                            format='%(asctime)s - %(levelname)s - %(message)s', force=True)
 
         # Create a Spark session
         spark = SparkSession.builder \

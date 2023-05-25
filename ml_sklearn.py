@@ -1,23 +1,23 @@
+'''
+ML implementation using sklearn.
+Sci kit learn allows for training and exporting a model using python pickle serialization.
+
+This allows models to be easily unserialized with pickle and served through sci kit learn without a need for 
+a heavy backend infrastructure.
+'''
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_absolute_error, mean_squared_error
 import pickle
 import logging
-import ray
-from ray.util.joblib import register_ray
-from joblib import parallel_backend
 
 def train_model_sklearn(ml_data):
     try:
-        # Initialize Ray
-        ray.init(object_store_memory=12 * 1024 * 1024 * 1024)
-        
         # Set up logging
         logging.basicConfig(filename='training-sklearn.log', level=logging.INFO,
                             format='%(asctime)s - %(levelname)s - %(message)s', force=True)
-        
-        register_ray()
 
         # Load the dataset
         data = ml_data
@@ -38,11 +38,10 @@ def train_model_sklearn(ml_data):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
         # Create a RandomForestRegressor model
-        model = RandomForestRegressor(n_estimators=100, random_state=42, max_depth=6, verbose=10)
+        model = RandomForestRegressor(n_estimators=100, random_state=42, n_jobs=-1, max_depth=6, verbose=10)
 
         # Train the model in parallel using Ray
-        with parallel_backend("ray"):
-            model.fit(X_train, y_train)
+        model.fit(X_train, y_train)
 
         # Make predictions on test data
         y_pred = model.predict(X_test)
@@ -62,6 +61,3 @@ def train_model_sklearn(ml_data):
 
     except Exception as e:
         logging.error(f'An error occurred: {str(e)}')
-    finally:
-        # Shutdown Ray
-        ray.shutdown()

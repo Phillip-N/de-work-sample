@@ -9,3 +9,4 @@ stock-market-dataset/
 pad
 rolling_avg_calculations.py
 ml_with_ray.py
+testrun.py

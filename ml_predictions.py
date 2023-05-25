@@ -4,13 +4,12 @@
 from pyspark.sql import SparkSession
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import RandomForestRegressionModel
-from pyspark.ml import PipelineModel
 import mlflow.pyfunc
 import pandas as pd
 from pyspark.ml.linalg import Vectors
-import numpy as np
 import pickle
 
+# Prediction implementation with spark
 def spark_predict(vma, acrm):
     # Create a Spark session
     spark = SparkSession.builder \
@@ -39,6 +38,7 @@ def spark_predict(vma, acrm):
     # Display the predictions
     predictions.show()
 
+# Prediction implementation with mlflow
 def mlflow_predict(vma, acrm):
     # Path to the MLflow model's artifact location
     model_path = "mlflow_model/"
@@ -63,7 +63,7 @@ def mlflow_predict(vma, acrm):
 
     return predictions
 
-
+# Prediction implementation with sklearn
 def sklearn_predict(vma, acrm):
     filename = 'ml_model.pkl'
 
