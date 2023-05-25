@@ -11,7 +11,7 @@
 8. [Prefect](#prefect)
 
 ## Purpose of the Project <a name='purpose'></a>
-The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med).
+The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful run can be found in etl-logging.log (for the main etl function) **and** training-sklearn.log (for the ML modeling).
 
 ## Data Pipeline Architecture <a name='architecture'></a>
 The pipeline architecture can be seen in the below diagram. Technologies that will be used include:
@@ -73,11 +73,12 @@ As the pipeline has been entirely dockerized, reproducing the results should be 
 
 1. Pull the image from docker hub here: https://hub.docker.com/repository/docker/phillipng/stock-etl-docker/general
 2. Run the docker image, passing in your kaggle username and key (found in .json file, these should be strings and passed as "username" or "password") `docker run --shm-size=8g -e KAGGLE_USER={YOUR_KAGGLE_USERNAME} -e KAGGLE_KEY={YOUR_KAGGLE_KEY} phillipng/stock-etl-docker:{tag}`
-3. This will run the etl pipeline and print out progress updates to the console (progress also trackable through the Pefect UI, if using Prefect)
+3. This will run the etl pipeline and print out progress updates and/or errors to the console + logs (progress also trackable through the Pefect UI, if using Prefect)
 4. Any files of interest can then be copied locally
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-1.parquet {LOCAL_PATH}`
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/data/solution-2.parquet {LOCAL_PATH}`
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/ml_model.pkl {LOCAL_PATH}`
+   * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/etl-logging.log {LOCAL_PATH}`
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/training-sklearn.log {LOCAL_PATH}`
 
 ### Serving the Machine Learning Model <a name='serve'></a>
