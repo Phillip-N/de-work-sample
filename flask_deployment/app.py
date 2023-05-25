@@ -1,4 +1,3 @@
-
 from flask import Flask, jsonify
 from flask_restful import Resource, Api, reqparse
 from ml_predictions import sklearn_predict
