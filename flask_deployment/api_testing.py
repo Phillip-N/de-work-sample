@@ -9,7 +9,7 @@ df['adj_close_rolling_med'] = df['adj_close_rolling_med'].apply(lambda x: random
 
 for index, row in df.iterrows():
     endpoint = f"https://stock-volume-predict.onrender.com/predict?vol_moving_avg={row['vol_moving_avg']}&adj_close_rolling_med={row['adj_close_rolling_med']}"
-    response = requests.get(endpoint)
+    response = requests.get(endpoint, timeout=None)
     df.loc[index, 'vol_prediction'] = response.text
     df.loc[index, 'duration (in seconds)'] = response.elapsed.total_seconds()
 
