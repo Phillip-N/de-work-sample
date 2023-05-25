@@ -83,7 +83,7 @@ As the pipeline has been entirely dockerized, reproducing the results should be 
    * `docker cp {DOCKER_CONTAINER_NAME}:/usr/app/src/training-sklearn.log {LOCAL_PATH}`
 
 ## Serving the Machine Learning Model <a name='serve'></a>
-The model was served using a basic flask app on render.com. Currently, the web app has a single endpoint, which **requires** two input parameters `vol_moving_avg` and `adj_close_rolling_med`, that can be either an integer or a float. The endpoint uri must look like the below for the GET call to be successful. App was made not to accept a non-zero value for vol_moving_avg, and returns a 400 response code, if a negative number is passed in.
+The model was served using a basic flask app on render.com. Currently, the web app has a single endpoint, which **requires** two input parameters `vol_moving_avg` and `adj_close_rolling_med`, that can be either an integer or a float. The endpoint uri must look like the below for the GET call to be successful. App was made to not accept a negative number for vol_moving_avg, and returns a 400 response code, if a negative number is passed in.
 
 https://stock-volume-predict.onrender.com/predict?vol_moving_avg=4213434&adj_close_rolling_med=532
 
