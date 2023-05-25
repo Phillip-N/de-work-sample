@@ -20,10 +20,10 @@ def generate_logs(task=None, time=None, error=None):
 
 def fetch_dataset():
     try:
-        print("Fetching Data")
+        print("Fetching Data", flush=True)
         start = time.time()
         # Builds kaggle file based on env variables passed on docker run
-        # build_kaggle_json()
+        build_kaggle_json()
         
         import kaggle
         kaggle.api.authenticate()
@@ -39,8 +39,8 @@ def fetch_dataset():
         
         end = time.time()
         time_in_seconds = end-start
-        print("Fetching Data Complete")
-        print(f"Time Elapsed: {time_in_seconds}")
+        print("Fetching Data Complete", flush=True)
+        print(f"Time Elapsed: {time_in_seconds}", flush=True)
         generate_logs('Fetching Data', time_in_seconds)
 
     except Exception as e:
@@ -49,7 +49,7 @@ def fetch_dataset():
 
 def combine_data() -> pd.DataFrame:
     try:
-        print("Combinining Data")
+        print("Combining Data", flush=True)
         start = time.time()
 
         path = os.getcwd()
@@ -85,8 +85,8 @@ def combine_data() -> pd.DataFrame:
         
         end = time.time()
         time_in_seconds = end-start
-        print("Combining Data Complete")
-        print(f"Time Elapsed: {time_in_seconds}")
+        print("Combining Data Complete", flush=True)
+        print(f"Time Elapsed: {time_in_seconds}", flush=True)
         generate_logs('Combining Data', time_in_seconds)
 
         return all_securities_df
@@ -110,7 +110,7 @@ def clean(df) -> pd.DataFrame:
     Volume             683
     '''
     try:
-        print("Cleaning Data")
+        print("Cleaning Data", flush=True)
         start = time.time()
 
         df = df.dropna(subset=['Open'])
@@ -126,8 +126,8 @@ def clean(df) -> pd.DataFrame:
 
         end = time.time()
         time_in_seconds = end-start
-        print("Cleaning Data Complete")
-        print(f"Time Elapsed: {time_in_seconds}")
+        print("Cleaning Data Complete", flush=True)
+        print(f"Time Elapsed: {time_in_seconds}", flush=True)
         generate_logs('Cleaning Data', time_in_seconds)
 
         return df
@@ -138,7 +138,7 @@ def clean(df) -> pd.DataFrame:
 def create_job_files(df):
     # Creating job files to better serve worker processes with python multiprocessing
     try:
-        print("Creating rolling avg job files")
+        print("Creating rolling avg job files", flush=True)
         start = time.time()
 
         job_dir = 'data/job_files'
@@ -151,8 +151,8 @@ def create_job_files(df):
 
         end = time.time()
         time_in_seconds = end-start
-        print("Files created")
-        print(f"Time Elapsed: {time_in_seconds}")
+        print("Files created", flush=True)
+        print(f"Time Elapsed: {time_in_seconds}", flush=True)
         generate_logs('Creating Job Files', time_in_seconds)
 
         return job_files
@@ -170,7 +170,7 @@ def calculate_rolling_averages(job_file):
 
 def apply_rolling_averages(job_files):
     try:
-        print("Applying rolling averages")
+        print("Applying rolling averages", flush=True)
         start = time.time()
         
         # Perform multiprocessing with job filenames
@@ -185,8 +185,8 @@ def apply_rolling_averages(job_files):
 
         end = time.time()
         time_in_seconds = end-start
-        print("Applying rolling averages Complete")
-        print(f"Time Elapsed: {time_in_seconds}")
+        print("Applying rolling averages Complete", flush=True)
+        print(f"Time Elapsed: {time_in_seconds}", flush=True)
         generate_logs('Applying Rolling Averages', time_in_seconds)
 
         return new_df
@@ -195,15 +195,15 @@ def apply_rolling_averages(job_files):
         generate_logs('Applying Rolling Averages', error=e)
 
 def train_ml_model(ml_data):
-    print("Traning Machine Learning Model")
+    print("Traning Machine Learning Model", flush=True)
     start = time.time()
 
     train_model_sklearn(ml_data)
 
     end = time.time()
     time_in_seconds = end-start
-    print("Training Complete")
-    print(f"Time Elapsed: {time_in_seconds}")
+    print("Training Complete", flush=True)
+    print(f"Time Elapsed: {time_in_seconds}", flush=True)
 
 if __name__ == "__main__":
     logging.basicConfig(filename='etl-logging.log', level=logging.INFO,

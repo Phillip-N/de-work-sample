@@ -14,9 +14,7 @@ import logging
 from pyspark.ml.feature import VectorAssembler
 import mlflow
 import logging
-from prefect import task
 
-@task(log_prints=True)
 def train_model_spark(ml_data):
     try:
         # Set up logging

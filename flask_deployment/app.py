@@ -14,9 +14,11 @@ class PredictStockVolume(Resource):
 
     def get(self):
         args = self.reqparse.parse_args()
-        prediction = sklearn_predict(args['vol_moving_avg'], args['adj_close_rolling_med'])[0]
-
-        return prediction
+        if args['vol_moving_avg'] < 0:
+            return "vol_moving_avg must be a non-negative number"
+        else:
+            prediction = sklearn_predict(args['vol_moving_avg'], args['adj_close_rolling_med'])[0]
+            return prediction
 
 api.add_resource(PredictStockVolume, '/predict')
 
