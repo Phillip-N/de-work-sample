@@ -12,7 +12,7 @@
 9. [Prefect](#prefect)
 
 ## Purpose of the Project <a name='purpose'></a>
-The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful run can be found in etl-logging.log (for the main etl function) **and** training-sklearn.log (for the ML modeling).
+The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful runs can be found in etl-logging.log (for the main etl function) **and** training-sklearn.log (for the ML modeling).
 
 ## Data Pipeline Architecture <a name='architecture'></a>
 The pipeline architecture can be seen in the below diagram. Technologies that will be used include:
