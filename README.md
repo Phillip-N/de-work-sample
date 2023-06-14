@@ -12,7 +12,7 @@
 9. [Prefect](#prefect)
 
 ## Purpose of the Project <a name='purpose'></a>
-The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful runs can be found in etl-logging.log (for the main etl function) **and** training-sklearn.log (for the ML modeling).
+The idea behind this project is to build a data pipeline that extracts historical stock data from a kaggle dataset https://www.kaggle.com/datasets/jacksoncrow/stock-market-dataset for the purpose of training a machine learning model to predict stock volume at any given time, given two input parameters (vol_moving_avg and adj_close_rolling_med). Logging for successsful runs can be found in etl-logging.log (for the main ETL function) **and** training-sklearn.log (for the ML modeling).
 
 ## Data Pipeline Architecture <a name='architecture'></a>
 The pipeline architecture can be seen in the below diagram. Technologies that will be used include:
@@ -57,7 +57,7 @@ After the calculations have been done and the new columns have been added, the n
 Using a Random Forest algorithm, we can train a model to predict stock volume based the `vol_moving_avg` and `adj_close_rolling_med` metrics we calculated above. Two options were considered when deciding which machine learning library to use to build the model.
 
 #### Spark
-pyspark can be used to train the model, and leverages Spark's resilient distributed dataset for parallel computing. The benefit of using Spark from what I've seen is that it able to more efficiently utilize resources when dealing with larger datasets. The time it takes for Spark to build 100 trees with no limit on depth, was much faster than Sci-kit learn. A Spark variation of the ML training script is available under `ml_spark.py`, however this has not been integrated with docker.
+pyspark can be used to train the model, and leverages Spark's resilient distributed dataset for parallel computing. The benefit of using Spark from what I've seen is that it is able to more efficiently utilize resources when dealing with larger datasets. The time it takes for Spark to build 100 trees with no limit on depth, was much faster than Sci-kit learn. A Spark variation of the ML training script is available under `ml_spark.py`, however this has not been integrated with docker.
 
 #### Sci-kit Learn
 Sci-kit learn can also be used to train the model. The benefit of sci-kit learn is that it requires much less overhead than Spark does, and for use-cases where the dataset is small, and where training periods are not a huge concern, it may be preferable. Using Sklearn also means that the model can easily be seralized (pickled) and deserialized once it has finished training. This makes it much more easier to serve the model on an API for example, because unlike with Spark models, sklearn models do not require a Spark session and clusters to be active.
@@ -93,7 +93,7 @@ API tests were conducted and can be found in the flask_deployment folder. The py
 ## BONUS: Using Prefect <a name='prefect'></a>
 Prefect, which can be thought of as an alternative to airflow, can be used to more easily track the workflow of our ETL pipeline, while also allowing us to better manage our infrastructure with other services. Both a prefect variant of the `etl_flow.py` (prefect version: `etl_flow_prefect.py`) script and the dockerfile (`Dockerfile_prefect`), can also be found in this repo, and can be used if the user prefers a more cleaner approach to managing their workflows.
 
-Using prefect requires the user know how to set properly set up their docker blocks https://docs.prefect.io/latest/guides/deployment/docker/ and requires a prefect orion server and a prefect agent to be active. Once these prerequisites are met, we can sit back while Prefect manages the workflow.
+Using prefect requires the user to know how to properly set up their docker blocks https://docs.prefect.io/latest/guides/deployment/docker/ and requires a prefect orion server and a prefect agent to be active. Once these prerequisites are met, we can sit back while Prefect manages the workflow.
 
 ![flow_run](https://github.com/Phillip-N/de-work-sample/assets/10274304/15c7d95a-e214-4dda-b6ae-6662af78d575)
 
